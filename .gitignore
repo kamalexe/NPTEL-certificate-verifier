@@ -1,2 +1,32 @@
-NPTEL-certificates/*.*
-converted-certificate-image/*.*
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+venv/
+env/
+
+# Environment variables
+.env
+
+# System files
+.DS_Store
+Thumbs.db
+
+# PDF and image outputs
+*.pdf
+*.jpg
+*.jpeg
+*.png
+
+# Converted images and folders
+*/converted-certificate-image/
+
+# Certificate folders and results
+all-certificates/
+*.csv
+
+# IDE/project settings
+.vscode/
+.idea/

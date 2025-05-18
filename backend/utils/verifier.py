@@ -1,8 +1,11 @@
 import os
 import logging
+import csv
 from PIL import Image
 import pytesseract
 from pyzbar.pyzbar import decode
+import requests
+from bs4 import BeautifulSoup
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -32,9 +35,6 @@ def extract_certificate_data(image_path):
         logging.error(f"Failed to open image: {image_path} - {e}")
         return {"filename": os.path.basename(image_path), "error": "Could not open image"}
 
-    width, height = image.size
-
-    # Cropping regions: (left, top, right, bottom)
     regions = {
         "qr_code": (3544, 4664, 3973, 5058),
         "name": (1316, 1319, 5795, 1467),
@@ -59,3 +59,44 @@ def extract_certificate_data(image_path):
             extracted_data[field] = ""
 
     return extracted_data
+
+def is_valid_nptel_url(url: str) -> bool:
+    return url.startswith("https://") and "nptel" in url.lower()
+
+def download_pdf_from_button(response, filename, folder):
+    try:
+        soup = BeautifulSoup(response.content, 'html5lib')
+        certificate_link = soup.find("a", string="Course Certificate")
+        if certificate_link and certificate_link.get("href"):
+            pdf_path = certificate_link["href"]
+            base_url = "https://internalapp.nptel.ac.in"
+            full_pdf_url = base_url + pdf_path
+            pdf_response = requests.get(full_pdf_url)
+            if pdf_response.ok:
+                os.makedirs(folder, exist_ok=True)
+                pdf_file_path = os.path.join(folder, f"{filename}.pdf")
+                with open(pdf_file_path, "wb") as f:
+                    f.write(pdf_response.content)
+                logging.info(f"Certificate downloaded to {pdf_file_path}")
+            else:
+                logging.warning(f"Failed to download certificate from {full_pdf_url}")
+    except Exception as e:
+        logging.error(f"Error while downloading certificate for {filename}: {e}")
+
+def fetch_certificate_url(url):
+    try:
+        response = requests.get(url)
+        return response
+    except Exception as e:
+        logging.error(f"Unable to fetch the URL {url}: {e}")
+        return None
+
+def save_verification_result(result, csv_path="verification_results.csv"):
+    file_exists = os.path.isfile(csv_path)
+
+    with open(csv_path, mode='a', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ["filename", "qr_code", "name", "course", "marks", "credit", "roll", "duration"]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow(result)
