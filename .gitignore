@@ -1,32 +1,32 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*.so
+# # Byte-compiled / optimized / DLL files
+# __pycache__/
+# *.py[cod]
+# *.so
 
-# Virtual environments
-venv/
-env/
+# # Virtual environments
+# venv/
+# env/
 
-# Environment variables
-.env
+# # Environment variables
+# .env
 
-# System files
-.DS_Store
-Thumbs.db
+# # System files
+# .DS_Store
+# Thumbs.db
 
-# PDF and image outputs
-*.pdf
-*.jpg
-*.jpeg
-*.png
+# # PDF and image outputs
+# *.pdf
+# *.jpg
+# *.jpeg
+# *.png
 
-# Converted images and folders
-*/converted-certificate-image/
+# # Converted images and folders
+# */converted-certificate-image/
 
-# Certificate folders and results
-all-certificates/
-*.csv
+# # Certificate folders and results
+# all-certificates/
+# *.csv
 
-# IDE/project settings
-.vscode/
-.idea/
+# # IDE/project settings
+# .vscode/
+# .idea/
