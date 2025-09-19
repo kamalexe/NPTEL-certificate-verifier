@@ -71,6 +71,7 @@ def download_pdf_from_button(response, filename, folder):
             pdf_path = certificate_link["href"]
             base_url = "https://internalapp.nptel.ac.in"
             full_pdf_url = base_url + pdf_path
+            print("KAMAL" + full_pdf_url)
             pdf_response = requests.get(full_pdf_url)
             if pdf_response.ok:
                 os.makedirs(folder, exist_ok=True)
