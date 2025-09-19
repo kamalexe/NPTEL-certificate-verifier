@@ -6,6 +6,7 @@ import pytesseract
 from pyzbar.pyzbar import decode
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -69,9 +70,16 @@ def download_pdf_from_button(response, filename, folder):
         certificate_link = soup.find("a", string="Course Certificate")
         if certificate_link and certificate_link.get("href"):
             pdf_path = certificate_link["href"]
-            base_url = "https://internalapp.nptel.ac.in"
-            full_pdf_url = base_url + pdf_path
-            print("KAMAL" + full_pdf_url)
+
+            # Normalize the URL
+            base_url = "https://archive.nptel.ac.in"
+            # Remove any trailing dot from domain if present
+            if base_url.endswith('.'):
+                base_url = base_url[:-1]
+
+            full_pdf_url = urljoin(base_url, pdf_path)
+            print(f"KAMAL {full_pdf_url} ______ {pdf_path} __________")
+
             pdf_response = requests.get(full_pdf_url)
             if pdf_response.ok:
                 os.makedirs(folder, exist_ok=True)
@@ -81,9 +89,11 @@ def download_pdf_from_button(response, filename, folder):
                 logging.info(f"Certificate downloaded to {pdf_file_path}")
             else:
                 logging.warning(f"Failed to download certificate from {full_pdf_url}")
+        else:
+            logging.warning(f"No 'Course Certificate' link found for {filename}")
     except Exception as e:
         logging.error(f"Error while downloading certificate for {filename}: {e}")
-
+        
 def fetch_certificate_url(url):
     try:
         response = requests.get(url)
