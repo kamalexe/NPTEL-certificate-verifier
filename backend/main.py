@@ -37,7 +37,7 @@ def main():
         result = verifier.extract_certificate_data(image_path)
 
         # Debug: show extracted QR code
-        print(f"[KAMAL] Extracted QR code for {result['filename']}: {result.get('qr_code', '')}")
+        print(f"[DEBUG] Extracted QR code for {result['filename']}: {result.get('qr_code', '')}")
 
         # Save extracted details
         verifier.save_verification_result(result, csv_path=SUBMITTED_CERT_EXTRACTED_RESULT)
@@ -46,7 +46,7 @@ def main():
         qr_url = result.get("qr_code", "")
         if verifier.is_valid_nptel_url(qr_url):
             response = verifier.fetch_certificate_url(qr_url)
-            print(f"[KAMAL] Fetched download response for {result['filename']}: {response}")
+            print(f"[DEBUG] Fetched download response for {result['filename']}: {response}")
             if response:
                 verifier.download_pdf_from_button(response, result["filename"].split('.')[0], folder=DOWNLOADED_CERT_FOLDER)
         else:
@@ -70,7 +70,7 @@ def main():
         result = verifier.extract_certificate_data(image_path)
 
         # Debug: show extracted data
-        print(f"[KAMAL] Extracted data for {result['filename']}: {result}")
+        print(f"[DEBUG] Extracted data for {result['filename']}: {result}")
 
         # Save extracted details
         verifier.save_verification_result(result, csv_path=DOWNLOADED_CERT_EXTRACTED_RESULT)
@@ -84,7 +84,7 @@ def compare_both_cert_details():
         reader = csv.DictReader(sub_file)
         for row in reader:
             submitted_data[row['filename']] = row
-    print(f"[KAMAL CHECK] Loaded submitted data: {submitted_data}")
+    print(f"[DEBUG CHECK] Loaded submitted data: {submitted_data}")
 
     # Read downloaded certificate extracted results
     downloaded_data = {}
@@ -92,7 +92,7 @@ def compare_both_cert_details():
         reader = csv.DictReader(down_file)
         for row in reader:
             downloaded_data[row['filename']] = row
-    print(f"[KAMAL CHECK] Loaded downloaded data: {downloaded_data}")
+    print(f"[DEBUG CHECK] Loaded downloaded data: {downloaded_data}")
 
     # Prepare result rows
     result_rows = []
@@ -107,7 +107,7 @@ def compare_both_cert_details():
         if not downloaded_row:
             row_result['verified'] = False
             row_result['reason'] = "Downloaded certificate not found"
-            print(f"[KAMAL CHECK] {filename}: Downloaded certificate not found")
+            print(f"[DEBUG CHECK] {filename}: Downloaded certificate not found")
         else:
             mismatches = []
             for key in ['name', 'course', 'marks', 'roll', 'duration', 'credit']:
@@ -116,11 +116,11 @@ def compare_both_cert_details():
             if mismatches:
                 row_result['verified'] = False
                 row_result['reason'] = f"Mismatched fields: {', '.join(mismatches)}"
-                print(f"[KAMAL CHECK] {filename}: Mismatched fields: {mismatches}")
+                print(f"[DEBUG CHECK] {filename}: Mismatched fields: {mismatches}")
             else:
                 row_result['verified'] = True
                 row_result['reason'] = "All fields matched"
-                print(f"[KAMAL CHECK] {filename}: All fields matched")
+                print(f"[DEBUG CHECK] {filename}: All fields matched")
         result_rows.append(row_result)
 
     # Write the final result CSV
@@ -128,7 +128,7 @@ def compare_both_cert_details():
         writer = csv.DictWriter(result_file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(result_rows)
-    print(f"[KAMAL CHECK] Final verification CSV written to: {FINAL_RESULT}")
+    print(f"[DEBUG CHECK] Final verification CSV written to: {FINAL_RESULT}")
 
 if __name__ == "__main__":
     main()

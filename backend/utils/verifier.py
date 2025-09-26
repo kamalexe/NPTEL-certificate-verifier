@@ -78,7 +78,7 @@ def download_pdf_from_button(response, filename, folder):
                 base_url = base_url[:-1]
 
             full_pdf_url = urljoin(base_url, pdf_path)
-            print(f"KAMAL {full_pdf_url} ______ {pdf_path} __________")
+            print(f"DEBUG {full_pdf_url} ______ {pdf_path} __________")
 
             pdf_response = requests.get(full_pdf_url)
             if pdf_response.ok:
